@@ -1,0 +1,41 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stockdata-download-deployment
+  labels:
+    app: stockdata-download
+spec:
+  replicas: 1  # 根据实际需求调整副本数量
+  selector:
+    matchLabels:
+      app: stockdata-download
+  template:
+    metadata:
+      labels:
+        app: stockdata-download
+    spec:
+      containers:
+        - name: stockdata-download
+          image: <your_dockerhub_username>/stockdata_download:latest  # 替换为你的 Docker 镜像
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          envFrom:
+            - configMapRef:
+                name: stockdata-download-config
+          #  livenessProbe:  #可以自行添加
+          #    exec:
+          #      command: ["python", "scripts/health_check.py"]
+          #    initialDelaySeconds: 30
+          #    periodSeconds: 10
+          #readinessProbe: #可以自行添加
+          #    exec:
+          #      command: ["python", "scripts/health_check.py"]
+          #    initialDelaySeconds: 30
+          #    periodSeconds: 10
