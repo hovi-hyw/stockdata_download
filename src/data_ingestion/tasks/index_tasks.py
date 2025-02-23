@@ -52,7 +52,7 @@ class IndexTasks:
             try:
                 index_data = self.fetcher.fetch_index_daily_data(
                     formatted_symbol,
-                    "20040101",
+                    config.AKSHARE_DATA_START_DATE,
                     datetime.today().strftime("%Y%m%d")
                 )
                 if index_data is None:

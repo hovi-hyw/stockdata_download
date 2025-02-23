@@ -22,7 +22,8 @@ class Config:
 
     # 其他路径配置(使用绝对路径)
     CACHE_PATH = os.path.join(PROJECT_ROOT, os.getenv("CACHE_PATH", "cache"))
-    LOG_FILE = os.path.join(PROJECT_ROOT, os.getenv("LOG_FILE", "logs/stockdata_download.log"))
+    LOG_DIR = os.path.join(PROJECT_ROOT, os.getenv("LOG_DIR", "logs"))  # 日志目录
+    # LOG_FILE = os.path.join(PROJECT_ROOT, os.getenv("LOG_FILE", "logs/stockdata_download.log")) #已经弃用
 
     # 数据库配置
     DATABASE_URL = os.getenv("DATABASE_URL")
@@ -59,6 +60,19 @@ class Config:
 
     # 数据缓存目录
     DATA_CACHE_DIR = os.getenv("DATA_CACHE_DIR", "data_cache")
+
+    # 数据库初始化重试次数和间隔
+    DB_INIT_MAX_RETRIES = int(os.getenv("DB_INIT_MAX_RETRIES", 3))
+    DB_INIT_RETRY_DELAY = int(os.getenv("DB_INIT_RETRY_DELAY", 5))
+
+    # 数据加载批量插入大小
+    DATA_LOAD_BATCH_SIZE = int(os.getenv("DATA_LOAD_BATCH_SIZE", 1000))
+
+    # 数据转换验证是否开启
+    TRANSFORMER_VALIDATE_DATA = os.getenv("TRANSFORMER_VALIDATE_DATA", "True").lower() == "true"
+
+    # AkShare API 数据起始日期
+    AKSHARE_DATA_START_DATE = os.getenv("AKSHARE_DATA_START_DATE", "20040101")
 
 
 # 实例化配置对象

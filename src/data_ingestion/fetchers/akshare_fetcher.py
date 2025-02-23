@@ -140,9 +140,3 @@ class AkShareFetcher:
         except Exception as e:
             logger.error(f"Failed to fetch concept board data: {e}")
             raise DataFetchError(f"Failed to fetch concept board data: {e}")
-
-    def get_last_n_days(self, n):
-        """
-        获取过去 n 天的日期
-        """
-        return (self.today - timedelta(days=n)).strftime("%Y%m%d")

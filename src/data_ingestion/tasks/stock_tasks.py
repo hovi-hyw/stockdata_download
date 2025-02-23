@@ -43,8 +43,12 @@ class StockTasks:
         # 下载股票日数据并保存到数据库
         for symbol in stock_list["代码"]:
             try:
-                stock_data = self.fetcher.fetch_stock_daily_data(symbol, "20040101",
-                                                                 datetime.today().strftime("%Y%m%d"), 'hfq')
+                stock_data = self.fetcher.fetch_stock_daily_data(
+                    symbol,
+                    config.AKSHARE_DATA_START_DATE,
+                    datetime.today().strftime("%Y%m%d"),
+                    'hfq'
+                )
                 transformed_data = self.transformer.transform_stock_daily_data(stock_data)
                 self.loader.load_stock_daily_data(transformed_data, symbol)
                 logger.info(f"股票 {symbol} 日数据下载并保存完成")

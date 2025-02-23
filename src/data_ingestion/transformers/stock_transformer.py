@@ -5,6 +5,31 @@
 
 import pandas as pd
 from src.core.logger import logger
+from src.core.config import config
+
+
+class BaseTransformer:
+    """
+    数据转换器的抽象基类
+    """
+    @staticmethod
+    def _validate_dataframe(data: pd.DataFrame, required_columns: list):
+        """
+        验证 DataFrame 是否有效，包括类型检查和缺失值处理
+        """
+        if not isinstance(data, pd.DataFrame):
+            logger.error("Input data is not a pandas DataFrame.")
+            raise ValueError("Input data must be a pandas DataFrame.")
+
+        if data.empty:
+            logger.warning("DataFrame is empty, no transformation needed.")
+            return False
+
+        if not all(col in data.columns for col in required_columns):
+            missing_columns = [col for col in required_columns if col not in data.columns]
+            logger.error(f"Missing required columns: {missing_columns}")
+            raise ValueError(f"DataFrame missing required columns: {missing_columns}")
+        return True
 
 
 class StockTransformer:
@@ -17,23 +42,12 @@ class StockTransformer:
         """
         转换股票日线数据
         """
-        # 检查输入是否为 DataFrame
-        if not isinstance(stock_data, pd.DataFrame):
-            logger.error("Input data is not a pandas DataFrame.")
-            raise ValueError("Input data must be a pandas DataFrame.")
-
-        # 检查 DataFrame 是否为空
-        if stock_data.empty:
-            logger.warning("DataFrame is empty, no transformation needed.")
-            return stock_data
-
-        # 检查是否缺少必要的列
         required_columns = ['date', 'open', 'close', 'high', 'low', 'volume', 'amount', 'outstanding_share',
                             'turnover']
-        if not all(col in stock_data.columns for col in required_columns):
-            missing_columns = [col for col in required_columns if col not in stock_data.columns]
-            logger.error(f"Missing required columns: {missing_columns}")
-            raise ValueError(f"DataFrame missing required columns: {missing_columns}")
+
+        if config.TRANSFORMER_VALIDATE_DATA:  # 从 config 中读取是否开启数据验证
+            if not BaseTransformer._validate_dataframe(stock_data, required_columns):
+                return stock_data  # 如果 DataFrame 无效，则直接返回
 
         try:
             # 转换 'date' 列为日期类型
